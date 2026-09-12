@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Translator — English · Hindi · Tamil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F5FA;
+    --card:#FFFFFF;
+    --ink:#3A3D52;
+    --muted:#9497A8;
+    --line:#EAEBF3;
+    --violet:#A9A0EC;
+    --violet-dark:#938AE0;
+    --violet-tint:#F1EFFC;
+    --violet-text:#7B72CC;
+    --success:#6FBF9A;
+    --success-tint:#EDF8F2;
+    --error:#D98A80;
+    --error-tint:#FCF0EE;
+    --font-body:'Work Sans', system-ui, -apple-system, sans-serif;
+    --font-hi:'Noto Sans Devanagari', var(--font-body);
+    --font-ta:'Noto Sans Tamil', var(--font-body);
+  }
+  *{box-sizing:border-box;}
+  html{font-size:16px;transition:font-size .15s ease;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding:32px 16px 60px;
+  }
+  .wrap{max-width:1040px;margin:0 auto;}
+
+  .brand-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand-mark{
+    width:52px;height:40px;border-radius:12px;
+    background:linear-gradient(135deg,#4C3CAF 0%,#0E7490 55%,#0F766E 100%);
+    border:1px solid rgba(255,255,255,.72);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    box-shadow:0 5px 14px rgba(76,59,175,.22);
+  }
+  .brand-mark .robot-logo{width:40px;height:34px;}
+  .brand-mark:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(76,59,175,.30);}
+  .brand-name{font-weight:800;font-size:1.18rem;color:#252846;letter-spacing:-.01em;}
+  .brand-name{font-weight:700;font-size:1.125rem;color:var(--ink);}
+  .brand-tagline{font-size:0.75rem;color:var(--muted);display:block;margin-top:1px;}
+  .right-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .device-note{font-size:0.78rem;color:var(--muted);}
+
+  .fontsize-toggle{display:flex;align-items:center;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px;}
+  .fontsize-toggle button{
+    border:none;background:transparent;cursor:pointer;color:var(--muted);
+    font-family:var(--font-body);font-weight:600;border-radius:999px;
+    padding:5px 11px;transition:background .15s ease, color .15s ease, transform .1s ease;
+  }
+  .fontsize-toggle button:nth-child(1){font-size:0.72rem;}
+  .fontsize-toggle button:nth-child(2){font-size:0.85rem;}
+  .fontsize-toggle button:nth-child(3){font-size:0.98rem;}
+  .fontsize-toggle button.active{background:var(--violet-tint);color:var(--violet-text);}
+  .fontsize-toggle button:hover{transform:translateY(-1px);}
+
+  .card{
+    background:var(--card);
+    border-radius:20px;
+    box-shadow:0 1px 2px rgba(35,36,59,0.04), 0 12px 32px rgba(35,36,59,0.06);
+    padding:28px 28px 22px;
+  }
+
+  .lang-row{display:grid;grid-template-columns:1fr 1fr auto;gap:16px;align-items:end;margin-bottom:22px;}
+  .field label{display:block;font-weight:600;font-size:0.875rem;margin-bottom:8px;color:var(--ink);}
+  select{
+    width:100%;font-family:var(--font-body);font-size:0.9375rem;color:var(--ink);
+    padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;
+    cursor:pointer;appearance:none;transition:border-color .15s ease;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239497A8' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;
+  }
+  select:hover{border-color:var(--violet);}
+  .translate-btn-wrap{display:flex;}
+  /* High-contrast action buttons */
+  .btn{
+    font-family:var(--font-body);font-weight:700;font-size:0.9rem;
+    padding:11px 20px;border-radius:10px;border:1px solid transparent;cursor:pointer;
+    white-space:nowrap;letter-spacing:.01em;
+    transition:background .18s ease,border-color .18s ease,transform .15s ease,box-shadow .18s ease,color .15s ease;
+  }
+  .btn:active:not(:disabled){transform:translateY(1px) scale(.98);}
+  .btn:disabled{
+    opacity:.62;cursor:not-allowed;filter:saturate(.55);
+    box-shadow:none;
+  }
+
+  .btn-primary{
+    background:#5B4BC4;color:#FFFFFF;border-color:#4C3CAF;
+    box-shadow:0 3px 8px rgba(76,59,175,.30);
+  }
+  .btn-primary:hover:not(:disabled){
+    background:#4637A8;border-color:#382B91;transform:translateY(-2px);
+    box-shadow:0 7px 16px rgba(76,59,175,.38);
+  }
+
+  .btn-pill{
+    font-size:0.875rem;padding:9px 16px;border-radius:999px;
+    color:#FFFFFF;border-width:1px;border-style:solid;
+  }
+
+  /* Every action gets its own strong contrast */
+  #swapBtn{background:#0E7490;color:#FFFFFF;border-color:#075985;}
+  #swapBtn:hover:not(:disabled){background:#0B5F75;box-shadow:0 6px 14px rgba(14,116,144,.28);transform:translateY(-2px);}
+
+  #clearBtn{background:#C2413B;color:#FFFFFF;border-color:#9F302B;}
+  #clearBtn:hover:not(:disabled){background:#A93631;box-shadow:0 6px 14px rgba(194,65,59,.25);transform:translateY(-2px);}
+
+  #summarizeBtn{background:#6D28D9;color:#FFFFFF;border-color:#5B21B6;}
+  #summarizeBtn:hover:not(:disabled){background:#5B21B6;box-shadow:0 6px 14px rgba(109,40,217,.28);transform:translateY(-2px);}
+
+  #pdfBtn{background:#1D4ED8;color:#FFFFFF;border-color:#1E40AF;}
+  #pdfBtn:hover:not(:disabled){background:#1E40AF;box-shadow:0 6px 14px rgba(29,78,216,.28);transform:translateY(-2px);}
+
+  #emailBtn{background:#047857;color:#FFFFFF;border-color:#065F46;}
+  #emailBtn:hover:not(:disabled){background:#065F46;box-shadow:0 6px 14px rgba(4,120,87,.27);transform:translateY(-2px);}
+
+  #whatsappBtn{background:#15803D;color:#FFFFFF;border-color:#166534;}
+  #whatsappBtn:hover:not(:disabled){background:#166534;box-shadow:0 6px 14px rgba(21,128,61,.27);transform:translateY(-2px);}
+
+  #copyBtn{background:#334155;color:#FFFFFF;border-color:#1E293B;}
+  #copyBtn:hover:not(:disabled){background:#1E293B;box-shadow:0 6px 14px rgba(51,65,85,.25);transform:translateY(-2px);}
+
+  #clearHistoryBtn{background:#475569;color:#FFFFFF;border-color:#334155;}
+  #clearHistoryBtn:hover:not(:disabled){background:#334155;transform:translateY(-2px);box-shadow:0 6px 14px rgba(51,65,85,.22);}
+
+  .col-heads{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:10px;}
+  .col-head{display:flex;justify-content:space-between;align-items:baseline;}
+  .col-head h3{font-size:0.875rem;font-weight:700;margin:0;color:var(--ink);}
+  .col-head .status-tag{font-size:0.78rem;color:var(--muted);}
+  .col-head .status-tag.ready{color:var(--success);font-weight:600;}
+
+  .text-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px;}
+  textarea, .output-box{
+    width:100%;min-height:230px;
+    font-family:var(--font-body);font-size:0.97rem;color:var(--ink);
+    padding:16px;border:1px solid var(--line);border-radius:12px;background:#fff;
+    line-height:1.6;resize:vertical;transition:border-color .15s ease;
+  }
+  textarea:hover{border-color:var(--violet);}
+  .output-box{white-space:pre-wrap;word-wrap:break-word;overflow-y:auto;}
+  .output-box.lang-hi{font-family:var(--font-hi);}
+  .output-box.lang-ta{font-family:var(--font-ta);}
+  .output-box.empty{color:var(--muted);}
+  textarea:focus, select:focus, button:focus{outline:2px solid var(--violet);outline-offset:2px;}
+
+  .action-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+
+  .status-bar{
+    background:var(--bg);border-radius:12px;padding:12px 16px;font-size:0.875rem;color:var(--muted);
+    transition:background .2s ease, color .2s ease;
+  }
+  .status-bar.success{background:var(--success-tint);color:var(--success);}
+  .status-bar.error{background:var(--error-tint);color:var(--error);}
+
+  .summary-box{
+    margin-top:16px;border-left:3px solid var(--violet);
+    background:var(--violet-tint);padding:14px 16px;border-radius:0 10px 10px 0;
+    font-size:0.9375rem;white-space:pre-wrap;display:none;
+  }
+  .summary-box.active{display:block;}
+  .summary-box.lang-hi{font-family:var(--font-hi);}
+  .summary-box.lang-ta{font-family:var(--font-ta);}
+  .summary-label{font-size:0.78rem;color:var(--violet-text);font-weight:700;display:block;margin-bottom:6px;}
+
+  /* History panel */
+  .history-card{margin-top:20px;}
+  .history-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .history-head h2{font-size:1rem;margin:0;}
+  .history-head .device-note{margin:0;}
+  .history-empty{color:var(--muted);font-size:0.875rem;padding:6px 0;}
+  .history-list{display:flex;flex-direction:column;gap:10px;max-height:360px;overflow-y:auto;}
+  .history-item{
+    border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;
+    transition:border-color .18s ease, background .18s ease, transform .15s ease, box-shadow .18s ease;
+  }
+  .history-item:hover{border-color:var(--violet);background:#FAF9FF;transform:translateY(-2px);box-shadow:0 6px 14px rgba(169,160,236,0.22);}
+  .history-item .h-top{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--muted);margin-bottom:6px;}
+  .history-item .h-langs{font-weight:600;color:var(--ink);}
+  .history-item .h-preview{font-size:0.875rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .history-item .h-preview.lang-hi{font-family:var(--font-hi);}
+  .history-item .h-preview.lang-ta{font-family:var(--font-ta);}
+
+  @media (max-width:760px){
+    .lang-row{grid-template-columns:1fr;}
+    .translate-btn-wrap{width:100%;}
+    .translate-btn-wrap .btn{width:100%;}
+    .col-heads, .text-grid{grid-template-columns:1fr;}
+  }
+
+  /* Print / PDF area */
+  #printArea{display:none;}
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{
+      display:block;position:absolute;top:0;left:0;width:100%;
+      padding:40px 48px;font-family:var(--font-body);color:#111;
+    }
+    .print-title{font-size:26px;font-weight:700;margin:0 0 4px;}
+    .print-meta{font-size:13px;color:#555;margin:0 0 24px;border-bottom:1px solid #ccc;padding-bottom:14px;}
+    .print-heading{font-size:16px;font-weight:700;margin:20px 0 8px;}
+    .print-body{font-size:14.5px;line-height:1.7;white-space:pre-wrap;word-wrap:break-word;}
+    .print-body.lang-hi{font-family:var(--font-hi);}
+    .print-body.lang-ta{font-family:var(--font-ta);}
+    .print-summary{font-size:13.5px;line-height:1.6;white-space:pre-wrap;background:#f3f3f3;padding:12px 14px;border-left:3px solid #7C6AE8;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="brand-row">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg class="robot-logo" viewBox="0 0 48 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 5V9" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="24" cy="3.5" r="2" fill="#FDE68A"/>
+          <rect x="7" y="9" width="34" height="25" rx="8" fill="rgba(255,255,255,.18)" stroke="#FFFFFF" stroke-width="2"/>
+          <rect x="12" y="14" width="24" height="13" rx="5" fill="#FFFFFF"/>
+          <circle cx="19" cy="20.5" r="2.2" fill="#4C3CAF"/>
+          <circle cx="29" cy="20.5" r="2.2" fill="#0E7490"/>
+          <path d="M19 25H29" stroke="#4C3CAF" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M3 18V25M45 18V25" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+          <path d="M15 34V37M33 34V37" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <span class="brand-name">Private Translator</span>
+        <span class="brand-tagline">English · Hindi · Tamil, on your device</span>
+      </div>
+    </div>
+    <div class="right-controls">
+      <div class="fontsize-toggle" role="group" aria-label="Text size">
+        <button type="button" id="fontSmall" title="Small text">S</button>
+        <button type="button" id="fontMedium" class="active" title="Medium text">M</button>
+        <button type="button" id="fontLarge" title="Large text">L</button>
+      </div>
+      <span class="device-note">History is saved only on this device</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lang-row">
+      <div class="field">
+        <label for="fromLang">From</label>
+        <select id="fromLang">
+          <option value="en">English</option>
+          <option value="hi">Hindi (हिन्दी)</option>
+          <option value="ta">Tamil (தமிழ்)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="toLang">Translate to</label>
+        <select id="toLang">
+          <option value="ta">Tamil (தமிழ்)</option>
+          <option value="hi">Hindi (हिन्दी)</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <div class="translate-btn-wrap">
+        <button class="btn btn-primary" id="translateBtn">Translate</button>
+      </div>
+    </div>
+
+    <div class="col-heads">
+      <div class="col-head">
+        <h3>Original text</h3>
+        <span class="status-tag" id="wordCount">0 / 20,000 words</span>
+      </div>
+      <div class="col-head">
+        <h3>Translated text</h3>
+        <span class="status-tag" id="exportTag">—</span>
+      </div>
+    </div>
+
+    <div class="text-grid">
+      <textarea id="sourceText" placeholder="Type or paste up to 20,000 words…"></textarea>
+      <div class="output-box empty" id="outputBox">Your translation will appear here…</div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn btn-pill" id="swapBtn">⇄ Swap languages</button>
+      <button class="btn btn-pill" id="clearBtn">Clear</button>
+      <button class="btn btn-pill" id="summarizeBtn" disabled>✦ Summarize</button>
+      <button class="btn btn-pill" id="pdfBtn" disabled>↓ Export clean PDF</button>
+      <button class="btn btn-pill" id="emailBtn" disabled>✉ Email</button>
+      <button class="btn btn-pill" id="whatsappBtn" disabled>💬 WhatsApp</button>
+      <button class="btn btn-pill" id="copyBtn" disabled>Copy text</button>
+    </div>
+
+    <div class="status-bar" id="statusBar">Ready — enter up to 20,000 words and press Translate.</div>
+
+    <div class="summary-box" id="summaryBox">
+      <span class="summary-label">Quick summary</span>
+      <div id="summaryText"></div>
+    </div>
+  </div>
+
+  <div class="card history-card">
+    <div class="history-head">
+      <h2>Your translation history</h2>
+      <button class="btn btn-pill" id="clearHistoryBtn">Clear history</button>
+    </div>
+    <div class="history-empty" id="historyEmpty">No translations yet on this device.</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+
+</div>
+
+<!-- Hidden printable area used for PDF export -->
+<div id="printArea">
+  <div class="print-title">Translation Document</div>
+  <div class="print-meta" id="printMeta"></div>
+  <div class="print-heading">Translated Content</div>
+  <div class="print-body" id="printBody"></div>
+  <div id="printSummaryWrap" style="display:none;">
+    <div class="print-heading">Quick Summary</div>
+    <div class="print-summary" id="printSummary"></div>
+  </div>
+</div>
+
+<script>
+const MAX_WORDS = 20000;
+const LANG_NAMES = { en:'English', hi:'Hindi', ta:'Tamil' };
+const HISTORY_KEY = 'bhashaSetuHistory';
+const HISTORY_LIMIT = 30;
+
+const sourceText   = document.getElementById('sourceText');
+const wordCountEl  = document.getElementById('wordCount');
+const exportTag    = document.getElementById('exportTag');
+const fromLangSel  = document.getElementById('fromLang');
+const toLangSel    = document.getElementById('toLang');
+const swapBtn      = document.getElementById('swapBtn');
+const translateBtn = document.getElementById('translateBtn');
+const clearBtn     = document.getElementById('clearBtn');
+const outputBox    = document.getElementById('outputBox');
+const summarizeBtn = document.getElementById('summarizeBtn');
+const copyBtn      = document.getElementById('copyBtn');
+const summaryBox   = document.getElementById('summaryBox');
+const summaryText  = document.getElementById('summaryText');
+const pdfBtn       = document.getElementById('pdfBtn');
+const emailBtn     = document.getElementById('emailBtn');
+const whatsappBtn  = document.getElementById('whatsappBtn');
+const statusBar    = document.getElementById('statusBar');
+const historyList  = document.getElementById('historyList');
+const historyEmpty = document.getElementById('historyEmpty');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+function autoChooseTargetLanguage(){
+  const from = fromLangSel.value;
+  // Never allow the two sides to be the same. English defaults to Tamil.
+  const preferred = from === 'en' ? 'ta' : 'en';
+  if(toLangSel.value === from){
+    toLangSel.value = preferred;
+  }
+}
+
+fromLangSel.addEventListener('change', ()=>{
+  autoChooseTargetLanguage();
+  // If English is the original language, keep a different language visible automatically.
+  if(fromLangSel.value === 'en' && toLangSel.value === 'en'){
+    toLangSel.value = 'ta';
+  }
+});
+
+let lastTranslation = '';
+let lastSummary = '';
+
+function countWords(str){
+  const t = str.trim();
+  if(!t) return 0;
+  return t.split(/\s+/).length;
+}
+
+function setStatus(msg, type){
+  statusBar.textContent = msg;
+  statusBar.className = 'status-bar' + (type ? (' ' + type) : '');
+}
+
+function updateCounter(){
+  const words = countWords(sourceText.value);
+  wordCountEl.textContent = `${words.toLocaleString()} / ${MAX_WORDS.toLocaleString()} words`;
+  const over = words > MAX_WORDS;
+  wordCountEl.style.color = over ? 'var(--error)' : '';
+  translateBtn.disabled = over || words === 0;
+}
+sourceText.addEventListener('input', updateCounter);
+autoChooseTargetLanguage();
+updateCounter();
+
+swapBtn.addEventListener('click', ()=>{
+  const f = fromLangSel.value, t = toLangSel.value;
+  fromLangSel.value = t; toLangSel.value = f;
+  autoChooseTargetLanguage();
+  if(lastTranslation){
+    sourceText.value = lastTranslation;
+    updateCounter();
+    resetOutput();
+  }
+});
+
+clearBtn.addEventListener('click', ()=>{
+  sourceText.value = '';
+  updateCounter();
+  resetOutput();
+  setStatus('Ready — enter up to 20,000 words and press Translate.');
+});
+
+function resetOutput(){
+  outputBox.textContent = 'Your translation will appear here…';
+  outputBox.className = 'output-box empty';
+  lastTranslation = '';
+  summarizeBtn.disabled = true;
+  copyBtn.disabled = true;
+  pdfBtn.disabled = true;
+  emailBtn.disabled = true;
+  whatsappBtn.disabled = true;
+  summaryBox.classList.remove('active');
+  lastSummary = '';
+  exportTag.textContent = '—';
+  exportTag.classList.remove('ready');
+}
+
+function splitIntoChunks(text, maxLen){
+  const sentences = text.match(/[^.!?।॥]+[.!?।॥]*\s*/g) || [text];
+  const chunks = [];
+  let current = '';
+  for(const s of sentences){
+    if((current + s).length > maxLen && current.length > 0){
+      chunks.push(current.trim());
+      current = s;
+    } else {
+      current += s;
+    }
+  }
+  if(current.trim().length > 0) chunks.push(current.trim());
+  return chunks.length ? chunks : [text];
+}
+
+async function translateViaGoogle(chunk, from, to){
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(chunk)}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('primary service unavailable');
+  const data = await res.json();
+  if(Array.isArray(data) && Array.isArray(data[0])){
+    return data[0].map(seg => seg && seg[0] ? seg[0] : '').join('');
+  }
+  throw new Error('unexpected response from primary service');
+}
+
+async function translateViaMyMemory(chunk, from, to){
+  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=${from}|${to}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('fallback service unavailable');
+  const data = await res.json();
+  if(data && data.responseData && typeof data.responseData.translatedText === 'string'){
+    return data.responseData.translatedText;
+  }
+  throw new Error('unexpected response from fallback service');
+}
+
+async function translateChunk(chunk, from, to){
+  try{
+    return await translateViaGoogle(chunk, from, to);
+  }catch(e){
+    return await translateViaMyMemory(chunk, from, to);
+  }
+}
+
+translateBtn.addEventListener('click', async ()=>{
+  const from = fromLangSel.value, to = toLangSel.value;
+  const text = sourceText.value.trim();
+  if(!text) return;
+  if(from === to){
+    setStatus('Please choose two different languages.', 'error');
+    return;
+  }
+  const words = countWords(text);
+  if(words > MAX_WORDS){
+    setStatus(`This is over the ${MAX_WORDS.toLocaleString()}-word limit. Please shorten the text.`, 'error');
+    return;
+  }
+
+  const chunks = splitIntoChunks(text, 480);
+  translateBtn.disabled = true;
+  clearBtn.disabled = true;
+  setStatus(`Translating… 0 / ${chunks.length} sections`);
+
+  let translatedParts = [];
+  try{
+    for(let i=0;i<chunks.length;i++){
+      const part = await translateChunk(chunks[i], from, to);
+      translatedParts.push(part);
+      setStatus(`Translating… ${i+1} / ${chunks.length} sections`);
+      await new Promise(r=>setTimeout(r, 200));
+    }
+    lastTranslation = translatedParts.join(' ').trim();
+    outputBox.textContent = lastTranslation;
+    outputBox.className = 'output-box' + (to === 'hi' ? ' lang-hi' : to === 'ta' ? ' lang-ta' : '');
+    summarizeBtn.disabled = false;
+    copyBtn.disabled = false;
+    pdfBtn.disabled = false;
+    emailBtn.disabled = false;
+    whatsappBtn.disabled = false;
+    summaryBox.classList.remove('active');
+    lastSummary = '';
+    exportTag.textContent = 'Ready for export';
+    exportTag.classList.add('ready');
+    setStatus(`Translated ${words.toLocaleString()} words from ${LANG_NAMES[from]} to ${LANG_NAMES[to]}.`, 'success');
+    saveHistoryEntry(from, to, text, lastTranslation);
+  }catch(err){
+    setStatus('Translation failed — the free translation service may be busy. Please wait a moment and try again, or try a shorter passage.', 'error');
+  }finally{
+    translateBtn.disabled = false;
+    clearBtn.disabled = false;
+  }
+});
+
+function summarize(text, maxSentences){
+  const sentences = (text.match(/[^.!?।॥]+[.!?।॥]*/g) || [text]).map(s=>s.trim()).filter(Boolean);
+  if(sentences.length <= maxSentences) return text;
+  const freq = {};
+  const allWords = (text.toLowerCase().match(/[\p{L}\p{M}]+/gu) || []);
+  allWords.forEach(w=>{ freq[w] = (freq[w]||0) + 1; });
+  const scored = sentences.map((s, idx)=>{
+    const w = (s.toLowerCase().match(/[\p{L}\p{M}]+/gu) || []);
+    const score = w.reduce((a,word)=>a + (freq[word]||0), 0) / (w.length || 1);
+    return { s, idx, score };
+  });
+  scored.sort((a,b)=>b.score - a.score);
+  const top = scored.slice(0, maxSentences).sort((a,b)=>a.idx - b.idx);
+  return top.map(t=>t.s).join(' ');
+}
+
+summarizeBtn.addEventListener('click', ()=>{
+  if(!lastTranslation) return;
+  const to = toLangSel.value;
+  lastSummary = summarize(lastTranslation, 3);
+  summaryText.textContent = lastSummary;
+  summaryBox.className = 'summary-box active' + (to === 'hi' ? ' lang-hi' : to === 'ta' ? ' lang-ta' : '');
+});
+
+copyBtn.addEventListener('click', async ()=>{
+  if(!lastTranslation) return;
+  try{
+    await navigator.clipboard.writeText(lastTranslation);
+    const original = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    setTimeout(()=>{ copyBtn.textContent = original; }, 1500);
+  }catch(e){
+    setStatus('Could not copy automatically — please select and copy the text manually.', 'error');
+  }
+});
+
+function buildMeta(){
+  const from = LANG_NAMES[fromLangSel.value];
+  const to = LANG_NAMES[toLangSel.value];
+  const now = new Date();
+  const dateStr = now.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+  const timeStr = now.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
+  return { from, to, dateStr, timeStr };
+}
+
+pdfBtn.addEventListener('click', ()=>{
+  if(!lastTranslation) return;
+  const { from, to, dateStr, timeStr } = buildMeta();
+  document.getElementById('printMeta').textContent = `${from} → ${to}   ·   ${dateStr}   ·   ${timeStr}`;
+  const printBody = document.getElementById('printBody');
+  printBody.textContent = lastTranslation;
+  printBody.className = 'print-body' + (toLangSel.value === 'hi' ? ' lang-hi' : toLangSel.value === 'ta' ? ' lang-ta' : '');
+  const summaryWrap = document.getElementById('printSummaryWrap');
+  if(lastSummary){
+    document.getElementById('printSummary').textContent = lastSummary;
+    summaryWrap.style.display = 'block';
+  } else {
+    summaryWrap.style.display = 'none';
+  }
+  window.print();
+});
+
+emailBtn.addEventListener('click', ()=>{
+  if(!lastTranslation) return;
+  const { from, to, dateStr, timeStr } = buildMeta();
+  const subject = `Translation (${from} to ${to}) — ${dateStr}`;
+  let body = `Translated on ${dateStr} at ${timeStr}\n${from} → ${to}\n\n${lastTranslation}`;
+  let truncated = false;
+  if(body.length > 1500){
+    body = body.slice(0, 1500) + '…\n\n[Message trimmed for email links — download the PDF for the full text.]';
+    truncated = true;
+  }
+  window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  if(truncated) setStatus('Email was trimmed because it was long. Use "Export clean PDF" to send the complete text as an attachment.', 'error');
+});
+
+whatsappBtn.addEventListener('click', ()=>{
+  if(!lastTranslation) return;
+  const { from, to } = buildMeta();
+  let msg = `Translation (${from} → ${to}):\n\n${lastTranslation}`;
+  let truncated = false;
+  if(msg.length > 1500){
+    msg = msg.slice(0, 1500) + '…\n\n[Trimmed — see attached PDF for the full text.]';
+    truncated = true;
+  }
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  if(truncated) setStatus('WhatsApp message was trimmed because it was long. Use "Export clean PDF" to share the complete text as a file instead.', 'error');
+});
+
+/* ---------- History (saved per-device via localStorage) ---------- */
+
+function loadHistory(){
+  try{
+    const raw = localStorage.getItem(HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function saveHistory(list){
+  try{
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
+  }catch(e){
+    // Storage may be unavailable (e.g. private browsing) — fail silently.
+  }
+}
+
+function saveHistoryEntry(from, to, original, translated){
+  const list = loadHistory();
+  list.unshift({
+    id: Date.now(),
+    from, to,
+    original, translated,
+    when: new Date().toISOString()
+  });
+  while(list.length > HISTORY_LIMIT) list.pop();
+  saveHistory(list);
+  renderHistory();
+}
+
+function formatWhen(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' · ' +
+         d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+}
+
+function renderHistory(){
+  const list = loadHistory();
+  historyList.innerHTML = '';
+  if(list.length === 0){
+    historyEmpty.style.display = 'block';
+    return;
+  }
+  historyEmpty.style.display = 'none';
+  list.forEach(item=>{
+    const el = document.createElement('div');
+    el.className = 'history-item';
+    const previewClass = item.to === 'hi' ? ' lang-hi' : item.to === 'ta' ? ' lang-ta' : '';
+    el.innerHTML = `
+      <div class="h-top">
+        <span class="h-langs">${LANG_NAMES[item.from]} → ${LANG_NAMES[item.to]}</span>
+        <span>${formatWhen(item.when)}</span>
+      </div>
+      <div class="h-preview${previewClass}">${item.translated.replace(/</g,'&lt;')}</div>
+    `;
+    el.addEventListener('click', ()=>{
+      fromLangSel.value = item.from;
+      toLangSel.value = item.to;
+      sourceText.value = item.original;
+      updateCounter();
+      lastTranslation = item.translated;
+      outputBox.textContent = item.translated;
+      outputBox.className = 'output-box' + previewClass;
+      summarizeBtn.disabled = false;
+      copyBtn.disabled = false;
+      pdfBtn.disabled = false;
+      emailBtn.disabled = false;
+      whatsappBtn.disabled = false;
+      summaryBox.classList.remove('active');
+      lastSummary = '';
+      exportTag.textContent = 'Ready for export';
+      exportTag.classList.add('ready');
+      setStatus('Loaded from history — ready for export.', 'success');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+    historyList.appendChild(el);
+  });
+}
+
+clearHistoryBtn.addEventListener('click', ()=>{
+  saveHistory([]);
+  renderHistory();
+  setStatus('History cleared on this device.');
+});
+
+renderHistory();
+
+/* ---------- Text size toggle ---------- */
+const FONT_KEY = 'ptFontSize';
+const FONT_SIZES = { small:'14px', medium:'16px', large:'19px' };
+const fontButtons = {
+  small: document.getElementById('fontSmall'),
+  medium: document.getElementById('fontMedium'),
+  large: document.getElementById('fontLarge')
+};
+
+function applyFontSize(size){
+  document.documentElement.style.fontSize = FONT_SIZES[size] || FONT_SIZES.medium;
+  Object.entries(fontButtons).forEach(([key, btn])=>{
+    btn.classList.toggle('active', key === size);
+  });
+  try{ localStorage.setItem(FONT_KEY, size); }catch(e){}
+}
+
+Object.entries(fontButtons).forEach(([key, btn])=>{
+  btn.addEventListener('click', ()=>applyFontSize(key));
+});
+
+(function initFontSize(){
+  let saved = 'medium';
+  try{ saved = localStorage.getItem(FONT_KEY) || 'medium'; }catch(e){}
+  applyFontSize(saved);
+})();
+</script>
+
+</body>
+</html>
